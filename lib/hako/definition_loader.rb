@@ -46,7 +46,7 @@ module Hako
             when 'app'
               AppContainer.new(@app, @app.definition['app'].merge('tag' => tag), dry_run: @dry_run)
             else
-              Container.new(@app, sidecars.fetch(name), dry_run: @dry_run)
+              AppContainer.new(@app, sidecars.fetch(name).merge('tag' => tag), dry_run: @dry_run)
             end
 
           containers[name].links.each do |link|
