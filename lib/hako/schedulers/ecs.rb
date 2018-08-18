@@ -502,7 +502,7 @@ module Hako
       def register_task_definition_for_oneshot(definitions)
         10.times do |i|
           begin
-            family = definitions[0].fetch(:name)
+            family = @app_id
             current_task_definition = describe_task_definition(family)
             if task_definition_changed?(definitions, current_task_definition)
               new_task_definition = ecs_client.register_task_definition(
