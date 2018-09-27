@@ -41,17 +41,18 @@ module Hako
       scripts.each(&:rollback_finished)
     end
 
+    # @param [Boolean] force
     # @param [Array<String>] commands
     # @param [String] tag
     # @param [Hash<String, String>] env
     # @param [Boolean] dry_run
     # @param [Boolean] no_wait
     # @return [nil]
-    def oneshot(commands, tag:, containers:, env: {}, dry_run: false, no_wait: false)
+    def oneshot(commands, force: false, tag:, containers:, env: {}, dry_run: false, no_wait: false)
       containers = load_containers(tag, dry_run: dry_run, with: containers)
       scripts = @app.definition.fetch('scripts', []).map { |config| load_script(config, dry_run: dry_run) }
       volumes = @app.definition.fetch('volumes', {})
-      scheduler = load_scheduler(@app.definition['scheduler'], scripts, volumes: volumes, dry_run: dry_run)
+      scheduler = load_scheduler(@app.definition['scheduler'], scripts, volumes: volumes, force: force, dry_run: dry_run)
 
       scripts.each { |script| script.oneshot_starting(containers) }
       exit_code = with_oneshot_signal_handlers(scheduler) do
